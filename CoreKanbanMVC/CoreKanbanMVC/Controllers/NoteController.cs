@@ -24,12 +24,9 @@ namespace CoreKanbanMVC.Controllers
         {
             var columnId = noteService.ReadNote(id)?.ColumnId;
             var boardId = (columnId != null) ? columnService.ReadColumn((int) columnId)?.BoardId : null;
+            var affected = noteService.DeleteNote(id);
 
-            if (boardId != null)
-            {
-                noteService.DeleteNote(id);
-                return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
-            }
+            if (boardId != null && affected > 0) return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             else return RedirectToAction("Index", "Board");
         }
 
@@ -40,12 +37,9 @@ namespace CoreKanbanMVC.Controllers
         {
             var columnId = noteService.ReadNote(id)?.ColumnId;
             var boardId = (columnId != null) ? columnService.ReadColumn((int)columnId)?.BoardId : null;
+            var affected = noteService.UpdateNote(id, title, text);
 
-            if (boardId != null)
-            {
-                noteService.UpdateNote(id, title, text);
-                return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
-            }
+            if (boardId != null && affected > 0) return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             else return RedirectToAction("Index", "Board");
         }
     }

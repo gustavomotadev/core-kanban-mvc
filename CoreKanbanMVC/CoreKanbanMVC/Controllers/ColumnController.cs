@@ -19,15 +19,10 @@ namespace CoreKanbanMVC.Controllers
         public ActionResult DeleteColumn(int id,
             [FromServices] IColumnService columnService)
         {
-            var column = columnService.ReadColumn(id);
+            var boardId = columnService.ReadColumn(id)?.BoardId;
+            var affected = columnService.DeleteColumn(id);
 
-            if (column != null)
-            {
-                var boardId = column.BoardId;
-                columnService.DeleteColumn(id);
-
-                return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
-            }
+            if (boardId != null && affected > 0) return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             else return RedirectToAction("Index", "Board");
         }
 
@@ -35,14 +30,10 @@ namespace CoreKanbanMVC.Controllers
         public ActionResult UpdateColumn(int id, string title,
             [FromServices] IColumnService columnService)
         {
-            var column = columnService.ReadColumn(id);
+            var boardId = columnService.ReadColumn(id)?.BoardId;
+            var affected = columnService.UpdateColumn(id, title);
 
-            if (column != null)
-            {
-                var boardId = column.BoardId;
-                columnService.UpdateColumn(id, title);
-                return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
-            }
+            if (boardId != null && affected > 0) return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             else return RedirectToAction("Index", "Board");
         }
     }
