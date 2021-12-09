@@ -1,0 +1,11 @@
+﻿@model CoreKanbanMVC.Models.Board
+
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<!-- board list -->
+@await Component.InvokeAsync("BoardList")
+
+<!-- selected board -->
+@await Component.InvokeAsync("Board", new {Id = Model.Id })

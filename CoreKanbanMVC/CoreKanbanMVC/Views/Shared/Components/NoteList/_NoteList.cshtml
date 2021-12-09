@@ -1,0 +1,23 @@
+﻿@model List<CoreKanbanMVC.Models.Note>
+
+<ul class="fix-margin-padding">
+    @foreach (var item in Model)
+    {
+    <li class="note-@item.Id">
+        <form class="update-note" action="@Url.Action("UpdateNote", "Note", new {id = item.Id})" method="post">
+            <div class="row bg-yellow0 note-name fix-margin-padding">
+                <h4 class="inline is-visible"><strong>@item.Title</strong></h4>
+                <input class="is-hidden" type="text" name="title" required minlength="1" maxlength="50" size="10">
+                <span onclick="editNote(@item.Id)" class="black is-visible btn btn-default not-rounded glyphicon glyphicon-pencil"></span>
+                <span onclick="submitFormDeleteNote(@item.Id)" class="black is-hidden btn btn-default not-rounded glyphicon glyphicon-trash"></span>
+                <span onclick="submitFormNote(@item.Id)" class="black is-hidden btn btn-default not-rounded glyphicon glyphicon-ok"></span>
+            </div>
+            <div class="row bg-yellow1 note-text fix-margin-padding">
+                <p class="is-visible">@item.Text</p>
+                <textarea class="is-hidden" name="text" required minlength="1" maxlength="500" cols="30" rows="10"></textarea>
+            </div>
+        </form>
+        <form class="delete-note always-hidden" action="@Url.Action("DeleteNote", "Note", new {id = item.Id})" method="post"></form>
+    </li>
+    }
+</ul>

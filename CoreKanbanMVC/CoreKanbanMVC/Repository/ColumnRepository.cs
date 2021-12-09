@@ -1,0 +1,107 @@
+﻿namespace CoreKanbanMVC.DAL
+{
+    public class ColumnRepository
+    {
+        public static int? CreateColumn(string title, int boardId)
+        {
+            string insertQuery = $"INSERT INTO [dbo].[Column] ([Title],[BoardId]) OUTPUT Inserted.Id VALUES ('{title}',{boardId})";
+
+            return (int?)DataBaseHelper.ExecuteScalarQuery(insertQuery);
+        }
+
+        public static int UpdateColumn(int id, string title)
+        {
+            string updateQuery = $"UPDATE [dbo].[Column] SET [Title] = '{title}' WHERE Id = {id} SELECT @@ROWCOUNT";
+
+            var result = DataBaseHelper.ExecuteScalarQuery(updateQuery);
+
+            return (result == null) ? 0 : (int)result;
+        }
+
+        public static int DeleteColumn(int id)
+        {
+            string deleteQuery = $"DELETE FROM [dbo].[Column] WHERE Id = {id} SELECT @@ROWCOUNT";
+
+            var result = DataBaseHelper.ExecuteScalarQuery(deleteQuery);
+
+            return (result == null) ? 0 : (int)result;
+        }
+
+        public static dynamic ReadColumn(int id)
+        {
+            string readQuery = $"SELECT * FROM [dbo].[Column] WHERE Id = {id}";
+
+            var dataReader = DataBaseHelper.ExecuteReaderQuery(readQuery);
+
+            dynamic result;
+
+            if (dataReader.HasRows)
+            {
+                dataReader.Read();
+                result = new
+                {
+                    Id = Convert.ToInt32(dataReader["Id"]),
+                    Title = dataReader["Title"].ToString(),
+                    BoardId = Convert.ToInt32(dataReader["BoardId"])
+                };
+            }
+            else result = null;
+
+            dataReader.Dispose();
+
+            return result;
+        }
+
+        public static List<dynamic> ReadAllColumns()
+        {
+            string readQuery = $"SELECT * FROM [dbo].[Column]";
+
+            var dataReader = DataBaseHelper.ExecuteReaderQuery(readQuery);
+
+            var result = new List<dynamic>();
+
+            if (dataReader.HasRows)
+            {
+                while (dataReader.Read())
+                {
+                    result.Add(new
+                    {
+                        Id = Convert.ToInt32(dataReader["Id"]),
+                        Title = dataReader["Title"].ToString(),
+                        BoardId = Convert.ToInt32(dataReader["BoardId"])
+                    });
+                }
+            }
+
+            dataReader.Dispose();
+
+            return result;
+        }
+
+        public static List<dynamic> ReadColumnsInBoard(int boardId)
+        {
+            string readQuery = $"SELECT * FROM [dbo].[Column] WHERE BoardId = {boardId}";
+
+            var dataReader = DataBaseHelper.ExecuteReaderQuery(readQuery);
+
+            var result = new List<dynamic>();
+
+            if (dataReader.HasRows)
+            {
+                while (dataReader.Read())
+                {
+                    result.Add(new
+                    {
+                        Id = Convert.ToInt32(dataReader["Id"]),
+                        Title = dataReader["Title"].ToString(),
+                        BoardId = Convert.ToInt32(dataReader["BoardId"])
+                    });
+                }
+            }
+
+            dataReader.Dispose();
+
+            return result;
+        }
+    }
+}
