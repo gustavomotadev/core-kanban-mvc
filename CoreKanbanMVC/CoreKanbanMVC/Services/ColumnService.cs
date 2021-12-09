@@ -1,33 +1,34 @@
 ﻿using CoreKanbanMVC.DAL;
 using CoreKanbanMVC.Models;
+using CoreKanbanMVC.Services.Interfaces;
 
 namespace CoreKanbanMVC.Services
 {
-    public class ColumnService
+    public class ColumnService : IColumnService
     {
-        public static int DeleteColumn(int id)
+        public int DeleteColumn(int id)
         {
             return ColumnRepository.DeleteColumn(id);
         }
 
-        public static int UpdateColumn(int id, string title)
+        public int UpdateColumn(int id, string title)
         {
             return ColumnRepository.UpdateColumn(id, title);
         }
 
-        public static int? CreateColumn(int boardId, string title)
+        public int? CreateColumn(int boardId, string title)
         {
             return ColumnRepository.CreateColumn(title, boardId);
         }
 
-        public static Column ReadColumn(int id)
+        public Column ReadColumn(int id)
         {
             var columnDB = ColumnRepository.ReadColumn(id);
 
             return new Column() { Id = columnDB.Id, Title = columnDB.Title, BoardId = columnDB.BoardId };
         }
 
-        public static List<Column> ReadAllColumns()
+        public List<Column> ReadAllColumns()
         {
             var columnsDB = ColumnRepository.ReadAllColumns();
             var columns = new List<Column>();
@@ -40,7 +41,7 @@ namespace CoreKanbanMVC.Services
             return columns;
         }
 
-        public static List<Column> ReadColumnsInBoard(int boardId)
+        public List<Column> ReadColumnsInBoard(int boardId)
         {
             var columnsDB = ColumnRepository.ReadColumnsInBoard(boardId);
             var columns = new List<Column>();

@@ -1,28 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CoreKanbanMVC.Services;
+using CoreKanbanMVC.Services.Interfaces;
 
 namespace CoreKanbanMVC.Controllers
 {
     public class ColumnController : Controller
     {
         [HttpPost]
-        public ActionResult CreateColumn(int boardId, string title)
+        public ActionResult CreateColumn(int boardId, string title,
+            [FromServices] IColumnService columnService)
         {
-            var id = ColumnService.CreateColumn(boardId, title);
+            var id = columnService.CreateColumn(boardId, title);
 
             if (id != null) return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             else return RedirectToAction("Index", "Board");
         }
 
         [HttpPost]
-        public ActionResult DeleteColumn(int id)
+        public ActionResult DeleteColumn(int id,
+            [FromServices] IColumnService columnService)
         {
-            var column = ColumnService.ReadColumn(id);
+            var column = columnService.ReadColumn(id);
 
             if (column != null)
             {
                 var boardId = column.BoardId;
-                ColumnService.DeleteColumn(id);
+                columnService.DeleteColumn(id);
 
                 return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             }
@@ -30,14 +32,15 @@ namespace CoreKanbanMVC.Controllers
         }
 
         [HttpPost]
-        public ActionResult UpdateColumn(int id, string title)
+        public ActionResult UpdateColumn(int id, string title,
+            [FromServices] IColumnService columnService)
         {
-            var column = ColumnService.ReadColumn(id);
+            var column = columnService.ReadColumn(id);
 
             if (column != null)
             {
                 var boardId = column.BoardId;
-                ColumnService.UpdateColumn(id, title);
+                columnService.UpdateColumn(id, title);
                 return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             }
             else return RedirectToAction("Index", "Board");

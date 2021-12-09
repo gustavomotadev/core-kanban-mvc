@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CoreKanbanMVC.Services;
+using CoreKanbanMVC.Services.Interfaces;
 
 namespace CoreKanbanMVC.Controllers
 {
@@ -12,34 +12,38 @@ namespace CoreKanbanMVC.Controllers
         }
 
         [HttpGet]
-        public ActionResult DisplayBoard(int id)
+        public ActionResult DisplayBoard(int id, 
+            [FromServices] IBoardService boardService)
         {
-            var board = BoardService.ReadBoard(id);
+            var board = boardService.ReadBoard(id);
 
             return View(board);
         }
 
         [HttpPost]
-        public ActionResult DeleteBoard(int id)
+        public ActionResult DeleteBoard(int id,
+            [FromServices] IBoardService boardService)
         {
-            var affected = BoardService.DeleteBoard(id);
+            var affected = boardService.DeleteBoard(id);
 
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public ActionResult UpdateBoard(int id, string title)
+        public ActionResult UpdateBoard(int id, string title,
+            [FromServices] IBoardService boardService)
         {
-            var affected = BoardService.UpdateBoard(id, title);
+            var affected = boardService.UpdateBoard(id, title);
 
             if (affected > 0) return RedirectToAction("DisplayBoard", new {id});
             else return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public ActionResult CreateBoard(string title)
+        public ActionResult CreateBoard(string title,
+            [FromServices] IBoardService boardService)
         {
-            var id = BoardService.CreateBoard(title);
+            var id = boardService.CreateBoard(title);
 
             if (id != null) return RedirectToAction("DisplayBoard", new { id });
             else return RedirectToAction("Index");

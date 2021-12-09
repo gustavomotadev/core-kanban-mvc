@@ -1,33 +1,34 @@
 ﻿using CoreKanbanMVC.DAL;
 using CoreKanbanMVC.Models;
+using CoreKanbanMVC.Services.Interfaces;
 
 namespace CoreKanbanMVC.Services
 {
-    public class BoardService
+    public class BoardService : IBoardService
     {
-        public static int DeleteBoard(int id)
+        public int DeleteBoard(int id)
         {
             return BoardRepository.DeleteBoard(id);
         }
 
-        public static int UpdateBoard(int id, string title)
+        public int UpdateBoard(int id, string title)
         {
             return BoardRepository.UpdateBoard(id, title);
         }
 
-        public static int? CreateBoard(string title)
+        public int? CreateBoard(string title)
         {
             return BoardRepository.CreateBoard(title);
         }
 
-        public static Board ReadBoard(int id)
+        public Board ReadBoard(int id)
         {
             var boardDB = BoardRepository.ReadBoard(id);
 
             return new Board() { Id = boardDB.Id, Title = boardDB.Title };
         }
 
-        public static List<Board> ReadAllBoards()
+        public List<Board> ReadAllBoards()
         {
             var boardsDB = BoardRepository.ReadAllBoards();
             var boards = new List<Board>();

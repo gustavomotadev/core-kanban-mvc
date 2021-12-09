@@ -1,6 +1,13 @@
+using CoreKanbanMVC.Services;
+using CoreKanbanMVC.Services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IBoardService, BoardService>();
+builder.Services.AddScoped<IColumnService, ColumnService>();
+builder.Services.AddScoped<INoteService, NoteService>();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

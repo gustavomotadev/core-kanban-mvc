@@ -1,43 +1,49 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CoreKanbanMVC.Services;
+using CoreKanbanMVC.Services.Interfaces;
 
 namespace CoreKanbanMVC.Controllers
 {
     public class NoteController : Controller
     {
         [HttpPost]
-        public ActionResult CreateNote(int columnId, string title, string text)
+        public ActionResult CreateNote(int columnId, string title, string text,
+            [FromServices] IColumnService columnService,
+            [FromServices] INoteService noteService)
         {
-            var id = NoteService.CreateNote(columnId, title, text);
-            var boardId = ColumnService.ReadColumn(columnId)?.BoardId;
+            var id = noteService.CreateNote(columnId, title, text);
+            var boardId = columnService.ReadColumn(columnId)?.BoardId;
 
             if (id != null && boardId != null) return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             else return RedirectToAction("Index", "Board");
         }
 
         [HttpPost]
-        public ActionResult DeleteNote(int id)
+        public ActionResult DeleteNote(int id,
+            [FromServices] IColumnService columnService, 
+            [FromServices] INoteService noteService)
         {
-            var columnId = NoteService.ReadNote(id)?.ColumnId;
-            var boardId = (columnId != null) ? ColumnService.ReadColumn((int) columnId)?.BoardId : null;
+            var columnId = noteService.ReadNote(id)?.ColumnId;
+            var boardId = (columnId != null) ? columnService.ReadColumn((int) columnId)?.BoardId : null;
 
             if (boardId != null)
             {
-                NoteService.DeleteNote(id);
+                noteService.DeleteNote(id);
                 return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             }
             else return RedirectToAction("Index", "Board");
         }
 
         [HttpPost]
-        public ActionResult UpdateNote(int id, string title, string text)
+        public ActionResult UpdateNote(int id, string title, string text,
+            [FromServices] IColumnService columnService, 
+            [FromServices] INoteService noteService)
         {
-            var columnId = NoteService.ReadNote(id)?.ColumnId;
-            var boardId = (columnId != null) ? ColumnService.ReadColumn((int)columnId)?.BoardId : null;
+            var columnId = noteService.ReadNote(id)?.ColumnId;
+            var boardId = (columnId != null) ? columnService.ReadColumn((int)columnId)?.BoardId : null;
 
             if (boardId != null)
             {
-                NoteService.UpdateNote(id, title, text);
+                noteService.UpdateNote(id, title, text);
                 return RedirectToAction("DisplayBoard", "Board", new { id = boardId });
             }
             else return RedirectToAction("Index", "Board");
