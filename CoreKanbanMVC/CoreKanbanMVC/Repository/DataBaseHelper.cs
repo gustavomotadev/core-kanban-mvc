@@ -1,17 +1,21 @@
-﻿using System.Data;
+﻿using CoreKanbanMVC.Repository.Interfaces;
+using System.Data;
 using System.Data.SqlClient;
 
-namespace CoreKanbanMVC.DAL
+namespace CoreKanbanMVC.Repository
 {
-    public class DataBaseHelper
+    public class DatabaseHelper : IDatabaseHelper
     {
-        public static string ConnectionString { get; } = 
-            "Integrated Security=SSPI;Persist Security Info=False;" +
-            "Initial Catalog=KanbanMVC;Data Source=MIR-0544";
+        private readonly string _connectionString;
 
-        public static object ExecuteScalarQuery(string query)
+        public DatabaseHelper(IConfiguration configuration)
         {
-            SqlConnection connection = new SqlConnection(ConnectionString);
+            _connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
+
+        public object ExecuteScalarQuery(string query)
+        {
+            SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
 
             SqlCommand command = new SqlCommand(query, connection);
@@ -24,9 +28,9 @@ namespace CoreKanbanMVC.DAL
             return result;
         }
 
-        public static SqlDataReader ExecuteReaderQuery(string query)
+        public SqlDataReader ExecuteReaderQuery(string query)
         {
-            SqlConnection connection = new SqlConnection(ConnectionString);
+            SqlConnection connection = new SqlConnection(_connectionString);
             connection.Open();
 
             SqlCommand command = new SqlCommand(query, connection);

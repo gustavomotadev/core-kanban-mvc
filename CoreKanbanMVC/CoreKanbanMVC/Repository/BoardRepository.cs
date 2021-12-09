@@ -1,37 +1,46 @@
-﻿namespace CoreKanbanMVC.DAL
+﻿using CoreKanbanMVC.Repository.Interfaces;
+
+namespace CoreKanbanMVC.Repository
 {
-    public class BoardRepository
+    public class BoardRepository : IBoardRepository
     {
-        public static int? CreateBoard(string title)
+        private readonly IDatabaseHelper _databaseHelper;
+
+        public BoardRepository(IDatabaseHelper databaseHelper)
+        {
+            _databaseHelper = databaseHelper;
+        }
+
+        public int? CreateBoard(string title)
         {
             string insertQuery = $"INSERT INTO [dbo].[Board] ([Title]) OUTPUT Inserted.Id VALUES ('{title}')";
 
-            return (int?) DataBaseHelper.ExecuteScalarQuery(insertQuery);
+            return (int?) _databaseHelper.ExecuteScalarQuery(insertQuery);
         }
 
-        public static int UpdateBoard(int id, string title)
+        public int UpdateBoard(int id, string title)
         {
             string updateQuery = $"UPDATE [dbo].[Board] SET [Title] = '{title}' WHERE Id = {id} SELECT @@ROWCOUNT";
 
-            var result = DataBaseHelper.ExecuteScalarQuery(updateQuery);
+            var result = _databaseHelper.ExecuteScalarQuery(updateQuery);
 
             return (result == null) ? 0 : (int) result;
         }
 
-        public static int DeleteBoard(int id)
+        public int DeleteBoard(int id)
         {
             string deleteQuery = $"DELETE FROM [dbo].[Board] WHERE Id = {id} SELECT @@ROWCOUNT";
 
-            var result = DataBaseHelper.ExecuteScalarQuery(deleteQuery);
+            var result = _databaseHelper.ExecuteScalarQuery(deleteQuery);
 
             return (result == null) ? 0 : (int)result;
         }
 
-        public static dynamic ReadBoard(int id)
+        public dynamic ReadBoard(int id)
         {
             string readQuery = $"SELECT * FROM [dbo].[Board] WHERE Id = {id}";
 
-            var dataReader = DataBaseHelper.ExecuteReaderQuery(readQuery);
+            var dataReader = _databaseHelper.ExecuteReaderQuery(readQuery);
 
             dynamic result;
 
@@ -48,11 +57,11 @@
             return result;
         }
 
-        public static List<dynamic> ReadAllBoards()
+        public List<dynamic> ReadAllBoards()
         {
             string readQuery = $"SELECT * FROM [dbo].[Board]";
 
-            var dataReader = DataBaseHelper.ExecuteReaderQuery(readQuery);
+            var dataReader = _databaseHelper.ExecuteReaderQuery(readQuery);
 
             var result = new List<dynamic>();
 

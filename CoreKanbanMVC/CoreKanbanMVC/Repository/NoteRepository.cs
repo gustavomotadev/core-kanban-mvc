@@ -1,37 +1,46 @@
-﻿namespace CoreKanbanMVC.DAL
+﻿using CoreKanbanMVC.Repository.Interfaces;
+
+namespace CoreKanbanMVC.Repository
 {
-    public class NoteRepository
+    public class NoteRepository : INoteRepository
     {
-        public static int? CreateNote(string title, string text, int columnId)
+        private readonly IDatabaseHelper _databaseHelper;
+
+        public NoteRepository(IDatabaseHelper databaseHelper)
+        {
+            _databaseHelper = databaseHelper;
+        }
+
+        public int? CreateNote(string title, string text, int columnId)
         {
             string insertQuery = $"INSERT INTO [dbo].[Note] ([Title],[Text],[ColumnId]) OUTPUT Inserted.Id VALUES ('{title}','{text}',{columnId})";
 
-            return (int?)DataBaseHelper.ExecuteScalarQuery(insertQuery);
+            return (int?) _databaseHelper.ExecuteScalarQuery(insertQuery);
         }
 
-        public static int UpdateNote(int id, string title, string text)
+        public int UpdateNote(int id, string title, string text)
         {
             string updateQuery = $"UPDATE [dbo].[Note] SET [Title] = '{title}', [Text] = '{text}' WHERE Id = {id} SELECT @@ROWCOUNT";
 
-            var result = DataBaseHelper.ExecuteScalarQuery(updateQuery);
+            var result = _databaseHelper.ExecuteScalarQuery(updateQuery);
 
             return (result == null) ? 0 : (int)result;
         }
 
-        public static int DeleteNote(int id)
+        public int DeleteNote(int id)
         {
             string deleteQuery = $"DELETE FROM [dbo].[Note] WHERE Id = {id} SELECT @@ROWCOUNT";
 
-            var result = DataBaseHelper.ExecuteScalarQuery(deleteQuery);
+            var result = _databaseHelper.ExecuteScalarQuery(deleteQuery);
 
             return (result == null) ? 0 : (int)result;
         }
 
-        public static dynamic ReadNote(int id)
+        public dynamic ReadNote(int id)
         {
             string readQuery = $"SELECT * FROM [dbo].[Note] WHERE Id = {id}";
 
-            var dataReader = DataBaseHelper.ExecuteReaderQuery(readQuery);
+            var dataReader = _databaseHelper.ExecuteReaderQuery(readQuery);
 
             dynamic result;
 
@@ -53,11 +62,11 @@
             return result;
         }
 
-        public static List<dynamic> ReadAllNotes()
+        public List<dynamic> ReadAllNotes()
         {
             string readQuery = $"SELECT * FROM [dbo].[Note]";
 
-            var dataReader = DataBaseHelper.ExecuteReaderQuery(readQuery);
+            var dataReader = _databaseHelper.ExecuteReaderQuery(readQuery);
 
             var result = new List<dynamic>();
 
@@ -80,11 +89,11 @@
             return result;
         }
 
-        public static List<dynamic> ReadNotesInColumn(int columnId)
+        public List<dynamic> ReadNotesInColumn(int columnId)
         {
             string readQuery = $"SELECT * FROM [dbo].[Note] WHERE ColumnId = {columnId}";
 
-            var dataReader = DataBaseHelper.ExecuteReaderQuery(readQuery);
+            var dataReader = _databaseHelper.ExecuteReaderQuery(readQuery);
 
             var result = new List<dynamic>();
 
